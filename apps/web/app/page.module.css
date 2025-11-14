@@ -1,188 +1,156 @@
-.page {
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-
-  display: grid;
-  grid-template-rows: 20px 1fr 20px;
-  align-items: center;
-  justify-items: center;
-  min-height: 100svh;
-  padding: 80px;
-  gap: 64px;
-  font-synthesis: none;
+.container {
+  text-align: center;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #dbeafe, #fef9c3);
+  min-height: 100vh;
+  padding: 40px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .page {
-    --gray-rgb: 255, 255, 255;
-    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
-    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-  }
+.title {
+  color: #1e293b;
+  font-size: 2.2rem;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.main {
+/* Shared card style for sections */
+.loginContainer,
+.createRoom,
+.joinRoom,
+.chatRoom {
+  width: 320px;
+  margin: 25px auto;
+  padding: 25px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Section headers */
+.loginContainer h1,
+.createRoom h1,
+.joinRoom h1,
+.chatRoom h1 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Scoped form elements */
+.loginContainer form,
+.createRoom form,
+.joinRoom form,
+.chatRoom form {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  grid-row-start: 2;
+  gap: 10px;
 }
 
-.main ol {
-  font-family: var(--font-geist-mono);
-  padding-left: 0;
-  margin: 0;
-  font-size: 14px;
-  line-height: 24px;
-  letter-spacing: -0.01em;
-  list-style-position: inside;
-}
-
-.main li:not(:last-of-type) {
-  margin-bottom: 8px;
-}
-
-.main code {
-  font-family: inherit;
-  background: var(--gray-alpha-100);
-  padding: 2px 4px;
-  border-radius: 4px;
+/* Scoped label styles */
+.loginContainer label,
+.createRoom label,
+.joinRoom label,
+.chatRoom label {
+  text-align: left;
   font-weight: 600;
+  color: #374151;
 }
 
-.ctas {
-  display: flex;
-  gap: 16px;
+/* Scoped input styles */
+.loginContainer input,
+.createRoom input,
+.joinRoom input,
+.chatRoom input {
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
 }
 
-.ctas a {
-  appearance: none;
-  border-radius: 128px;
-  height: 48px;
-  padding: 0 20px;
+.loginContainer input:focus,
+.createRoom input:focus,
+.joinRoom input:focus,
+.chatRoom input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* ✅ Scoped button styles */
+.loginContainer button,
+.createRoom button,
+.joinRoom button,
+.chatRoom button {
   border: none;
-  font-family: var(--font-geist-sans);
-  border: 1px solid transparent;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  padding: 10px;
+  border-radius: 6px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  color: white;
 }
 
-a.primary {
-  background: var(--foreground);
-  color: var(--background);
-  gap: 8px;
+/* Specific colors for each section */
+.loginContainer button {
+  background-color: #2563eb;
+}
+.loginContainer button:hover {
+  background-color: #1d4ed8;
 }
 
-a.secondary {
-  border-color: var(--gray-alpha-200);
-  min-width: 180px;
+.createRoom button {
+  background-color: #22c55e;
+}
+.createRoom button:hover {
+  background-color: #16a34a;
 }
 
-button.secondary {
-  appearance: none;
-  border-radius: 128px;
-  height: 48px;
-  padding: 0 20px;
-  border: none;
-  font-family: var(--font-geist-sans);
-  border: 1px solid transparent;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
-  background: transparent;
-  border-color: var(--gray-alpha-200);
-  min-width: 180px;
+.joinRoom button {
+  background-color: #facc15;
+  color: #333;
+}
+.joinRoom button:hover {
+  background-color: #eab308;
 }
 
-.footer {
-  font-family: var(--font-geist-sans);
-  grid-row-start: 3;
-  display: flex;
-  gap: 24px;
+.chatRoom button {
+  background-color: #06b6d4;
+}
+.chatRoom button:hover {
+  background-color: #0891b2;
 }
 
-.footer a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Chat box styles */
+.chatBox {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  height: 250px;
+  overflow-y: auto;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #f9fafb;
+  text-align: left;
 }
 
-.footer img {
-  flex-shrink: 0;
+.noMessages {
+  text-align: center;
+  color: #951e1e;
+  margin-top: 20px;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
-
-  .footer a:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
+.myMessage {
+  background-color: #4444dd;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin: 6px 0;
+  max-width: 80%;
+  align-self: flex-end;
 }
 
-@media (max-width: 600px) {
-  .page {
-    padding: 32px;
-    padding-bottom: 80px;
-  }
-
-  .main {
-    align-items: center;
-  }
-
-  .main ol {
-    text-align: center;
-  }
-
-  .ctas {
-    flex-direction: column;
-  }
-
-  .ctas a {
-    font-size: 14px;
-    height: 40px;
-    padding: 0 16px;
-  }
-
-  a.secondary {
-    min-width: auto;
-  }
-
-  .footer {
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
+.otherMessage {
+  background-color: #910e0e;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin: 6px 0;
+  max-width: 80%;
+  align-self: flex-start;
 }
