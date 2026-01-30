@@ -42,12 +42,12 @@ app.post("/signin", async (req, res) => {
     return res.status(400).json({ error: "Invalid data" });
   }
 
-  const { username, password } = parseData.data;
+  const { email, password } = parseData.data;
 
   try {
     const user = await prismaClient.user.findFirst({
       where: {
-        email: username, // assuming username is actually the email
+        email: email, // assuming username is actually the email
         password: password,
       },
     });
