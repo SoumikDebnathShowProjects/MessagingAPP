@@ -1,10 +1,15 @@
-import express from 'express';
+import express, { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '@repo/backend-common/config';
 import { middleware } from './middleware';
 import {roomSchema, signinSchema, UserSchema } from '@repo/common/types';
 import { prismaClient } from '@repo/db/client';
 import cors from 'cors';
+import { createRoom, enterRoomAndLoadChat, getOldMessages, getUserRooms, joinRoomByName, loadRoomAndMessagesById} from './controllers/CreateRoom';
+import {  syncBulkMessages } from './controllers/Message';
+import { deleteAvatarURL, getAvatarURL, setAvatarURL, updateAvatarURL } from './controllers/avaterurl';
+import upload from './config/cloudinary';   // adjust path if needed
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -19,9 +24,9 @@ app.post('/signup', (req, res) => {
                 password,
                 name,
             }
-        }).then((user)=>{
+        }).then((user:any)=>{
             res.json({userId: user.id, name: user.name});
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             res.status(500).json({error: 'Database error'});
         });
        ;
@@ -57,90 +62,39 @@ app.post("/signin", async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
-
-    // optional but useful for debugging
-    console.log("Generated Token:", token);
-    console.log("JWT_SECRET used:", JWT_SECRET);
-
-    // return only the token to client — never send secret key!
-    res.json({ token });
+    res.json({ token, userId:user.id });
   } catch (err) {
     console.error("Signin error:", err);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-app.post("/room", middleware, async (req, res) => {
-  const parsedData = roomSchema.safeParse(req.body);
-  if (!parsedData.success) {
-    return res.status(400).json({
-      message: "Incorrect inputs",
-      error: parsedData.error.format(),
-    });
-  }
+app.get("/me",middleware, async (req, res) => {
+//@ts-ignore
+    const userId=req.userId;
+    return res.status(200).json({
+    userId
+    
+  });
+  
 
-  // `req.userId` is set by middleware (from JWT)
-  // @ts-ignore
-  const userId = Number(req.userId);
-
-  try {
-    const room = await prismaClient.room.create({
-      data: {
-        slug: parsedData.data.name,
-        adminId: userId,
-      },
-    });
-
-    res.json({
-      message: "Room created successfully",
-      roomId: room.id,
-      slug: room.slug,
-    });
-  } catch (e: any) {
-    console.error("Room creation error:", e);
-    res.status(409).json({
-      message: "Room already exists with this name",
-    });
-  }
 });
+//////////////////////////////////////////////////////////////////
+app.post("/createrooms",middleware,createRoom);
+app.get("/messages/:roomId", middleware, getOldMessages);
+app.get("/load/:roomId", middleware, loadRoomAndMessagesById);
+app.post("/room/join",middleware,joinRoomByName);
+app.post("/room/enter", middleware, enterRoomAndLoadChat);
+app.get("/room/my-rooms", middleware, getUserRooms);
+app.post("/room/message/bulk", middleware, syncBulkMessages);
+///////////////////////////////////////
 
-app.get("/chats/:room", middleware, async (req, res) => {
-  const { room } = req.params;
-
-  if (!room) {
-    return res.status(400).json({ message: "Room parameter missing" });
-  }
-
-  const decodedRoom = decodeURIComponent(room);
-
-  try {
-    const foundRoom = await prismaClient.room.findUnique({
-      where: { slug: decodedRoom }, // change to { name: decodedRoom } if needed
-    });
-
-    if (!foundRoom) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-
-    const chats = await prismaClient.chat.findMany({
-      where: { roomId: foundRoom.id },
-      include: {
-        user: { select: { name: true, email: true } },
-      },
-      orderBy: { id: "desc" },
-      take: 50,
-    });
-
-    res.json(chats.reverse());
-  } catch (err: any) {
-    console.error("❌ Error fetching chats:", err.message || err);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
+app.get("/avatar/:userId",middleware, getAvatarURL);
+app.post("/avatar", middleware, upload.single("avatar"), setAvatarURL);
+app.put("/avatar", middleware, upload.single("avatar"), updateAvatarURL);
 
 
-
-
+app.delete("/avatar",middleware, deleteAvatarURL);
 
 
 app.listen(3001, () => {

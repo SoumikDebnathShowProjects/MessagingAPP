@@ -7,29 +7,89 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  name     String?
-  photo    String?
-  rooms    Room[]
-  chats    chat[]
+  id        String      @id @default(uuid())
+  name      String
+  email     String      @unique
+  password  String
+  avatar    String?
+  status    UserStatus  @default(OFFLINE)
+
+  rooms     RoomMember[]
+  messages  Message[]
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model Room {
-  id        Int      @id @default(autoincrement())
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  adminId   Int
-  admin     User     @relation(fields: [adminId], references: [id])
-  chats     chat[]
+  id          String        @id @default(uuid())
+  name        String
+  type        RoomType
+  createdBy  String
+
+  members     RoomMember[]
+  messages    Message[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([type])
 }
 
-model chat {
-  id      Int    @id @default(autoincrement())
-  roomId  Int
-  userId  Int
-  message String
-  room    Room   @relation(fields: [roomId], references: [id])
-  user    User   @relation(fields: [userId], references: [id])
+model RoomMember {
+  id        String    @id @default(uuid())
+
+  roomId   String
+  userId   String
+  role     RoomRole  @default(MEMBER)
+  isActive Boolean   @default(true)
+
+  room     Room      @relation(fields: [roomId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+
+  joinedAt DateTime  @default(now())
+
+  @@unique([roomId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String        @id @default(uuid())
+  content   String
+  type      MessageType  @default(TEXT)
+
+  roomId   String
+  senderId String
+
+  room     Room          @relation(fields: [roomId], references: [id])
+  sender   User          @relation(fields: [senderId], references: [id])
+
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  isDeleted Boolean      @default(false)
+
+  @@index([roomId, createdAt])
+}
+
+enum RoomType {
+  PRIVATE
+  GROUP
+  PUBLIC
+}
+
+enum RoomRole {
+  ADMIN
+  MEMBER
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
 }

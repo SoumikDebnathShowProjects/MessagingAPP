@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/middleware.ts"],"version":"5.9.2"}
+{"root":["./src/index.ts","./src/middleware.ts","./src/config/cloudinary.ts","./src/controllers/CreateRoom.ts","./src/controllers/Message.ts","./src/controllers/avaterurl.ts"],"version":"5.9.2"}

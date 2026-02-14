@@ -13,7 +13,7 @@
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts"
-  ],
+, "app/components/LoginPage.jsx", "app/room/[room]/page.jsx", "app/room/page.jsx", "app/Home/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]
